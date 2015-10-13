@@ -1,13 +1,11 @@
 package com.crazydude.navigationhandler;
 
+import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-
-import com.crazydude.navigationhandler.fragments.FirstFragment;
-import com.crazydude.navigationhandler.fragments.SecondFragment;
-import com.crazydude.navigationhandler.fragments.ThirdFragment;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -17,81 +15,140 @@ import java.util.ArrayList;
  */
 public class NavigationHandler {
 
-    private final static String TRANSACTION_PREFIX = "TRANS_";
+    public class Transaction {
+
+        private Fragment mCurrentFragment;
+
+        public Transaction(Fragment fragment) {
+            mCurrentFragment = fragment;
+        }
+
+        public void setCurrentFragment(Fragment fragment) {
+            this.mCurrentFragment = fragment;
+        }
+
+        public Fragment getFragment() {
+            return mCurrentFragment;
+        }
+    }
+
+    public enum SwitchMethod {
+        ADD, REPLACE;
+    }
 
     private WeakReference<AppCompatActivity> mActivity;
-    private ArrayList<String> mNavigationList;
+    private ArrayList<Transaction> mNavigationList;
 
     public NavigationHandler(AppCompatActivity activity) {
         mNavigationList = new ArrayList<>();
         mActivity = new WeakReference<>(activity);
     }
 
-    public void switchFragment(FragmentEnum fragment, boolean addToBack) {
-        switchFragment(fragment, addToBack, false);
-    }
+    public void switchFragment(@NonNull Fragment fragment, SwitchMethod switchMethod, boolean addToEnd) {
+        if (switchMethod == SwitchMethod.ADD && !addToEnd) {
+            throw new RuntimeException("Navigation handler doesn't support ADD method without adding to the end right now!");
+        }
 
-    public void switchFragment(FragmentEnum fragment, boolean addToBack, boolean storePrevious) {
         FragmentManager fragmentManager = mActivity.get().getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
-        Fragment createdFragment = null;
-
-        switch (fragment) {
-
-            case FIRST:
-                createdFragment = FirstFragment.newInstance("", "");
+        switch (switchMethod) {
+            case ADD:
+                transaction.add(R.id.content, fragment);
                 break;
-            case SECOND:
-                createdFragment = SecondFragment.newInstance("", "");
-                break;
-            case THIRD:
-                createdFragment = ThirdFragment.newInstance("", "");
+            case REPLACE:
+                transaction.replace(R.id.content, fragment);
                 break;
         }
 
-        if (addToBack) {
-            transaction.addToBackStack(TRANSACTION_PREFIX + mNavigationList.size());
-            mNavigationList.add(TRANSACTION_PREFIX + mNavigationList.size());
-        }
+        Transaction listTransaction = new Transaction(fragment);
 
-        if (storePrevious) {
-            transaction.add(R.id.content, createdFragment, null);
+        if (!addToEnd) {
+            if (mNavigationList.size() == 0) {
+                mNavigationList.add(listTransaction);
+            } else {
+                transaction.remove(mNavigationList.get(mNavigationList.size() - 1).getFragment());
+                mNavigationList.get(mNavigationList.size() - 1).setCurrentFragment(fragment);
+            }
         } else {
-            transaction.replace(R.id.content, createdFragment);
+            mNavigationList.add(listTransaction);
         }
 
         transaction.commit();
     }
 
+    public void removeAllFragmentsFromList() {
+        FragmentManager fragmentManager = mActivity.get().getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+
+        for (Transaction transaction1 : mNavigationList) {
+            transaction.remove(transaction1.getFragment());
+        }
+
+        mNavigationList.clear();
+        transaction.commit();
+        fragmentManager.executePendingTransactions();
+    }
+
+    public void removeFragmentFromList(int index) {
+        if (mNavigationList.size() > 0 && index < mNavigationList.size()) {
+            FragmentManager fragmentManager = mActivity.get().getSupportFragmentManager();
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+
+            transaction.remove(mNavigationList.get(index).getFragment());
+            mNavigationList.remove(index);
+            transaction.commit();
+        }
+    }
+
     public void switchBack() {
-        handleBackPress();
+        switchBack(1);
     }
 
     public void switchBack(int count) {
-        if (count > mNavigationList.size()) {
+        if (mNavigationList.size() - 1 < count) {
             mActivity.get().finish();
         } else {
+            FragmentManager fragmentManager = mActivity.get().getSupportFragmentManager();
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
             for (int i = 0; i < count; i++) {
-                mNavigationList.remove(mNavigationList.size() - 1);
+                if (mNavigationList.size() > 0) {
+                    transaction.remove(mNavigationList.get(mNavigationList.size() - 1 - i).getFragment());
+                    mNavigationList.remove(mNavigationList.size() - 1);
+                }
             }
-            mActivity.get().getSupportFragmentManager().popBackStack(mNavigationList.get(mNavigationList.size() - 1), 0);
+            if (mNavigationList.size() > 0) {
+                if (!mNavigationList.get(mNavigationList.size() - 1).getFragment().isAdded()) {
+                    transaction.add(R.id.content, mNavigationList.get(mNavigationList.size() - 1).getFragment());
+                }
+            }
+            transaction.commit();
         }
     }
 
-    public void switchBack(boolean removeAll) {
-        if (mNavigationList.size() > 0) {
-            mActivity.get().getSupportFragmentManager().popBackStack(mNavigationList.get(0), FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            mNavigationList.clear();
-        }
-    }
-
-    public void handleBackPress() {
+    public void handleBackButtonPress() {
         if (mNavigationList.size() > 1) {
-            mNavigationList.remove(mNavigationList.size() - 1);
-            mActivity.get().getSupportFragmentManager().popBackStack(mNavigationList.get(mNavigationList.size() - 1), 0);
+            FragmentManager fragmentManager = mActivity.get().getSupportFragmentManager();
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            transaction.remove(mNavigationList.get(mNavigationList.size() - 1).getFragment());
+            mNavigationList.remove(mNavigationList.get(mNavigationList.size() - 1));
+            if (mNavigationList.size() > 0) {
+                Fragment fragment = mNavigationList.get(mNavigationList.size() - 1).getFragment();
+                if (!fragment.isAdded()) {
+                    transaction.add(R.id.content, fragment);
+                }
+            }
+            transaction.commit();
         } else {
             mActivity.get().finish();
         }
+    }
+
+    public void saveState(Bundle state) {
+        state.putSerializable("navigation_list", mNavigationList);
+    }
+
+    public void restoreState(Bundle state) {
+        mNavigationList = (ArrayList<Transaction>) state.getSerializable("navigation_list");
     }
 }

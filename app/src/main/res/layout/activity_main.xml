@@ -42,7 +42,7 @@
     </RadioGroup>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
@@ -68,7 +68,39 @@
             android:id="@+id/without_backstack_add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Switch fragment without backstack(add)" />
+            android:text="Switch fragment without backstack (add)" />
+
+        <Button
+            android:id="@+id/switch_back_one"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Switch fragment back" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/switch_back_few"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Switch fragment back (count)" />
+
+            <EditText
+                android:id="@+id/switch_count"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:inputType="numberDecimal" />
+        </LinearLayout>
+
+
+        <Button
+            android:id="@+id/switch_back_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Switch back all fragments" />
     </LinearLayout>
 
 

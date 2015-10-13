@@ -3,7 +3,9 @@ package com.crazydude.navigationhandler.fragments;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,6 +62,8 @@ public class FirstFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        setRetainInstance(true);
+        Log.d("Lifecycle", "Created 1 fragment");
     }
 
     @Override
@@ -74,6 +78,12 @@ public class FirstFragment extends Fragment {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d("Lifecycle", "Destroyed 1 fragment");
     }
 
     @Override
