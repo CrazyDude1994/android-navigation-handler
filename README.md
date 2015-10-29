@@ -7,7 +7,7 @@ Add maven repository
 ```
 repositories {
     maven {
-        url 'https://dl.bintray.com/nuuneoi/maven/'
+        url 'https://dl.bintray.com/crazydude1994/maven/'
     }
 }
 ```
@@ -15,7 +15,7 @@ repositories {
 Add dependency
 ```
 dependencies {
-    compile 'com.crazydude.navigation-handler:navigation-handler:0.1'
+    compile 'com.crazydude:navigation-handler:0.1'
 }
 ```
 
