@@ -1,0 +1,52 @@
+apply plugin: 'com.android.library'
+
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = 'android-navigation-handler'
+
+    publishedGroupId = 'com.crazydude.navigation-handler'
+    libraryName = 'NavigationHandler'
+    artifact = 'navigation-handler'
+
+    libraryDescription = 'Android library that let you easily handle your fragment-based application with one activity'
+
+    siteUrl = 'https://github.com/CrazyDude1994/android-navigation-handler'
+    gitUrl = 'https://github.com/CrazyDude1994/android-navigation-handler.git'
+
+    libraryVersion = '0.1'
+
+    developerId = 'crazydude1994'
+    developerName = 'Sergey Kartavtsev'
+    developerEmail = 'crazyserega1994@mail.ru'
+
+    licenseName = 'GPL-2.0'
+    licenseUrl = 'http://opensource.org/licenses/gpl-2.0.php'
+    allLicenses = ["GPL-2.0"]
+}
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.1"
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:23.0.1'
+}
+
+apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
+apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'

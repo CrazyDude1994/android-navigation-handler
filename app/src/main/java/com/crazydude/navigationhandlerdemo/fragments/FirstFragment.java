@@ -1,6 +1,5 @@
-package com.crazydude.navigationhandler.fragments;
+package com.crazydude.navigationhandlerdemo.fragments;
 
-import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,18 +8,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.crazydude.navigationhandler.R;
+import com.crazydude.navigationhandlerdemo.R;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link ThirdFragment.OnFragmentInteractionListener} interface
+ * {@link FirstFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link ThirdFragment#newInstance} factory method to
+ * Use the {@link FirstFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ThirdFragment extends Fragment {
+public class FirstFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -41,8 +40,8 @@ public class ThirdFragment extends Fragment {
      * @return A new instance of fragment FirstFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ThirdFragment newInstance(String param1, String param2) {
-        ThirdFragment fragment = new ThirdFragment();
+    public static FirstFragment newInstance(String param1, String param2) {
+        FirstFragment fragment = new FirstFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -50,7 +49,7 @@ public class ThirdFragment extends Fragment {
         return fragment;
     }
 
-    public ThirdFragment() {
+    public FirstFragment() {
         // Required empty public constructor
     }
 
@@ -62,15 +61,14 @@ public class ThirdFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         setRetainInstance(true);
-
-        Log.d("Lifecycle", "Created 3 fragment");
+        Log.d("Lifecycle", "Created 1 fragment");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_third, container, false);
+        return inflater.inflate(R.layout.fragment_first, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -83,7 +81,7 @@ public class ThirdFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d("Lifecycle", "Destroyed 3 fragment");
+        Log.d("Lifecycle", "Destroyed 1 fragment");
     }
 
     @Override

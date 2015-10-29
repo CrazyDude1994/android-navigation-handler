@@ -1,4 +1,4 @@
-package com.crazydude.navigationhandlerdemo;
+package com.crazydude.navigationhandler;
 
 import org.junit.Test;
 

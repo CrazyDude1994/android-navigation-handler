@@ -1,6 +1,7 @@
 package com.crazydude.navigationhandler;
 
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -38,10 +39,12 @@ public class NavigationHandler {
 
     private WeakReference<AppCompatActivity> mActivity;
     private ArrayList<Transaction> mNavigationList;
+    private int mContentId;
 
-    public NavigationHandler(AppCompatActivity activity) {
+    public NavigationHandler(AppCompatActivity activity, @IdRes int contentId) {
         mNavigationList = new ArrayList<>();
         mActivity = new WeakReference<>(activity);
+        mContentId = contentId;
     }
 
     public void switchFragment(@NonNull Fragment fragment, SwitchMethod switchMethod, boolean addToEnd) {
@@ -54,10 +57,10 @@ public class NavigationHandler {
 
         switch (switchMethod) {
             case ADD:
-                transaction.add(R.id.content, fragment);
+                transaction.add(mContentId, fragment);
                 break;
             case REPLACE:
-                transaction.replace(R.id.content, fragment);
+                transaction.replace(mContentId, fragment);
                 break;
         }
 
@@ -119,7 +122,7 @@ public class NavigationHandler {
             }
             if (mNavigationList.size() > 0) {
                 if (!mNavigationList.get(mNavigationList.size() - 1).getFragment().isAdded()) {
-                    transaction.add(R.id.content, mNavigationList.get(mNavigationList.size() - 1).getFragment());
+                    transaction.add(mContentId, mNavigationList.get(mNavigationList.size() - 1).getFragment());
                 }
             }
             transaction.commit();
@@ -135,7 +138,7 @@ public class NavigationHandler {
             if (mNavigationList.size() > 0) {
                 Fragment fragment = mNavigationList.get(mNavigationList.size() - 1).getFragment();
                 if (!fragment.isAdded()) {
-                    transaction.add(R.id.content, fragment);
+                    transaction.add(mContentId, fragment);
                 }
             }
             transaction.commit();

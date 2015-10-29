@@ -1,4 +1,4 @@
-package com.crazydude.navigationhandler;
+package com.crazydude.navigationhandlerdemo;
 
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -8,9 +8,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 
-import com.crazydude.navigationhandler.fragments.FirstFragment;
-import com.crazydude.navigationhandler.fragments.SecondFragment;
-import com.crazydude.navigationhandler.fragments.ThirdFragment;
+import com.crazydude.navigationhandler.NavigationHandler;
+import com.crazydude.navigationhandlerdemo.fragments.FirstFragment;
+import com.crazydude.navigationhandlerdemo.fragments.SecondFragment;
+import com.crazydude.navigationhandlerdemo.fragments.ThirdFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mNavigationHandler = new NavigationHandler(this);
+        mNavigationHandler = new NavigationHandler(this, R.id.content);
 
         mRadioGroup = (RadioGroup) findViewById(R.id.radio_group);
 
