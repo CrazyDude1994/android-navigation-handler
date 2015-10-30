@@ -3,12 +3,10 @@ Android library that let you easily handle your fragment-based application with 
 
 # Install
 
-Add maven repository
+Add jcenter repository
 ```
 repositories {
-    maven {
-        url 'https://dl.bintray.com/crazydude1994/maven/'
-    }
+    jcenter()
 }
 ```
 
