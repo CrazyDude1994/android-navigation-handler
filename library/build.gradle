@@ -6,7 +6,7 @@ ext {
 
     publishedGroupId = 'com.crazydude.navigation-handler'
     libraryName = 'NavigationHandler'
-    artifact = 'navigation-handler'
+    artifact = 'library'
 
     libraryDescription = 'Android library that let you easily handle your fragment-based application with one activity'
 
