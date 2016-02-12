@@ -1,19 +1,23 @@
 package com.crazydude.navigationhandlerdemo;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 
+import com.crazydude.navigationhandler.Feature;
+import com.crazydude.navigationhandler.FeatureProvider;
 import com.crazydude.navigationhandler.NavigationHandler;
 import com.crazydude.navigationhandlerdemo.fragments.FirstFragment;
 import com.crazydude.navigationhandlerdemo.fragments.SecondFragment;
 import com.crazydude.navigationhandlerdemo.fragments.ThirdFragment;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity implements FeatureProvider {
 
     private NavigationHandler mNavigationHandler;
 
@@ -24,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mNavigationHandler = new NavigationHandler(this, R.id.content);
+        mNavigationHandler = new NavigationHandler(this, R.id.content, this);
 
         mRadioGroup = (RadioGroup) findViewById(R.id.radio_group);
 
@@ -119,5 +123,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         mNavigationHandler.restoreState(savedInstanceState);
         super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public void provideFeatures(List<Feature> features) {
+        for (Feature feature : features) {
+            switch (feature.getName()) {
+                case "toolbar":
+                    Bundle arguments = feature.getArguments();
+                    getSupportActionBar().setTitle(arguments.getString("title"));
+                    break;
+            }
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.crazydude.navigationhandler;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -10,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Crazy on 08.10.2015.
@@ -40,8 +42,19 @@ public class NavigationHandler {
     private WeakReference<AppCompatActivity> mActivity;
     private ArrayList<Transaction> mNavigationList;
     private int mContentId;
+    private FeatureProvider mFeatureProvider;
 
     public NavigationHandler(AppCompatActivity activity, @IdRes int contentId) {
+        init(activity, contentId, null);
+    }
+
+    public NavigationHandler(AppCompatActivity activity, @IdRes int contentId, @Nullable FeatureProvider featureProvider) {
+        init(activity, contentId, featureProvider);
+        mFeatureProvider = featureProvider;
+    }
+
+    private void init(AppCompatActivity activity, @IdRes int contentId,
+                      @Nullable FeatureProvider featureProvider) {
         mNavigationList = new ArrayList<>();
         mActivity = new WeakReference<>(activity);
         mContentId = contentId;
@@ -76,6 +89,8 @@ public class NavigationHandler {
         } else {
             mNavigationList.add(listTransaction);
         }
+
+        requestFeatureProvider(fragment);
 
         transaction.commit();
     }
@@ -122,7 +137,9 @@ public class NavigationHandler {
             }
             if (mNavigationList.size() > 0) {
                 if (!mNavigationList.get(mNavigationList.size() - 1).getFragment().isAdded()) {
-                    transaction.add(mContentId, mNavigationList.get(mNavigationList.size() - 1).getFragment());
+                    Fragment fragment = mNavigationList.get(mNavigationList.size() - 1).getFragment();
+                    requestFeatureProvider(fragment);
+                    transaction.add(mContentId, fragment);
                 }
             }
             transaction.commit();
@@ -130,7 +147,7 @@ public class NavigationHandler {
     }
 
     public void handleBackButtonPress() {
-        if (mNavigationList.size() > 1) {
+        /*if (mNavigationList.size() > 1) {
             FragmentManager fragmentManager = mActivity.get().getSupportFragmentManager();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.remove(mNavigationList.get(mNavigationList.size() - 1).getFragment());
@@ -144,7 +161,8 @@ public class NavigationHandler {
             transaction.commit();
         } else {
             mActivity.get().finish();
-        }
+        }*/
+        switchBack();
     }
 
     public void saveState(Bundle state) {
@@ -153,5 +171,16 @@ public class NavigationHandler {
 
     public void restoreState(Bundle state) {
         mNavigationList = (ArrayList<Transaction>) state.getSerializable("navigation_list");
+        if (mNavigationList.size() > 0) {
+            Transaction transaction = mNavigationList.get(mNavigationList.size() - 1);
+            requestFeatureProvider(transaction.getFragment());
+        }
+    }
+
+    private void requestFeatureProvider(Fragment fragment) {
+        if (mFeatureProvider != null && fragment instanceof FeatureRequester) {
+            List<Feature> features = ((FeatureRequester) fragment).requestFeature();
+            mFeatureProvider.provideFeatures(features);
+        }
     }
 }

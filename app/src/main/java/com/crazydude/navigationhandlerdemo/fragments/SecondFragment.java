@@ -8,7 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.crazydude.navigationhandler.Feature;
+import com.crazydude.navigationhandler.FeatureRequester;
 import com.crazydude.navigationhandlerdemo.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -19,7 +24,7 @@ import com.crazydude.navigationhandlerdemo.R;
  * Use the {@link SecondFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SecondFragment extends Fragment {
+public class SecondFragment extends Fragment implements FeatureRequester {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -90,6 +95,15 @@ public class SecondFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public List<Feature> requestFeature() {
+        ArrayList<Feature> features = new ArrayList<>();
+        Bundle arguments = new Bundle();
+        arguments.putString("title", "lol");
+        features.add(new Feature("toolbar", arguments));
+        return features;
     }
 
     /**
