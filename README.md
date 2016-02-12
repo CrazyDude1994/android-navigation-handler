@@ -13,7 +13,7 @@ repositories {
 Add dependency
 ```
 dependencies {
-    compile 'com.crazydude:navigation-handler:0.1'
+    compile 'com.crazydude:navigation-handler:0.2'
 }
 ```
 
