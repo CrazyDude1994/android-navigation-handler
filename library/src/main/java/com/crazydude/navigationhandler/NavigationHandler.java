@@ -43,14 +43,30 @@ public class NavigationHandler {
     private ArrayList<Transaction> mNavigationList;
     private int mContentId;
     private FeatureProvider mFeatureProvider;
+    private int mFragmentIn;
+    private int mFragmentOut;
 
-    public NavigationHandler(AppCompatActivity activity, @IdRes int contentId) {
+    public NavigationHandler(AppCompatActivity activity,
+                             @IdRes int contentId) {
         init(activity, contentId, null);
     }
 
-    public NavigationHandler(AppCompatActivity activity, @IdRes int contentId, @Nullable FeatureProvider featureProvider) {
+    public NavigationHandler(AppCompatActivity activity,
+                             @IdRes int contentId,
+                             @Nullable FeatureProvider featureProvider) {
         init(activity, contentId, featureProvider);
         mFeatureProvider = featureProvider;
+    }
+
+    public NavigationHandler(AppCompatActivity activity,
+                             @IdRes int contentId,
+                             @Nullable FeatureProvider featureProvider,
+                             int fragmentInAnim,
+                             int fragmentOutAnim) {
+        init(activity, contentId, featureProvider);
+        mFeatureProvider = featureProvider;
+        mFragmentIn = fragmentInAnim;
+        mFragmentOut = fragmentOutAnim;
     }
 
     private void init(AppCompatActivity activity, @IdRes int contentId,
@@ -67,6 +83,8 @@ public class NavigationHandler {
 
         FragmentManager fragmentManager = mActivity.get().getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
+
+        setAnimation(transaction);
 
         switch (switchMethod) {
             case ADD:
@@ -95,9 +113,17 @@ public class NavigationHandler {
         transaction.commit();
     }
 
+    private void setAnimation(FragmentTransaction transaction) {
+        if (mFragmentOut != 0 && mFragmentIn != 0) {
+            transaction.setCustomAnimations(mFragmentIn, mFragmentOut);
+        }
+    }
+
     public void removeAllFragmentsFromList() {
         FragmentManager fragmentManager = mActivity.get().getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
+
+        setAnimation(transaction);
 
         for (Transaction transaction1 : mNavigationList) {
             transaction.remove(transaction1.getFragment());
@@ -112,6 +138,8 @@ public class NavigationHandler {
         if (mNavigationList.size() > 0 && index < mNavigationList.size()) {
             FragmentManager fragmentManager = mActivity.get().getSupportFragmentManager();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
+
+            setAnimation(transaction);
 
             transaction.remove(mNavigationList.get(index).getFragment());
             mNavigationList.remove(index);
@@ -129,6 +157,9 @@ public class NavigationHandler {
         } else {
             FragmentManager fragmentManager = mActivity.get().getSupportFragmentManager();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
+
+            setAnimation(transaction);
+
             for (int i = 0; i < count; i++) {
                 if (mNavigationList.size() > 0) {
                     transaction.remove(mNavigationList.get(mNavigationList.size() - 1 - i).getFragment());
