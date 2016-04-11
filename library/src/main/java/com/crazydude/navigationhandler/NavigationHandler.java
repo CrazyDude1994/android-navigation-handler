@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -45,6 +46,7 @@ public class NavigationHandler {
     private FeatureProvider mFeatureProvider;
     private int mFragmentIn;
     private int mFragmentOut;
+    private HashSet<FragmentTransactionListener> mTransactionListeners = new HashSet<>();
 
     public NavigationHandler(AppCompatActivity activity,
                              @IdRes int contentId) {
@@ -74,6 +76,16 @@ public class NavigationHandler {
         mNavigationList = new ArrayList<>();
         mActivity = new WeakReference<>(activity);
         mContentId = contentId;
+    }
+
+    public void addTransactionListener(FragmentTransactionListener listener) {
+        mTransactionListeners.add(listener);
+    }
+
+    private void notifyListeners(Transaction transaction, boolean isBack) {
+        for (FragmentTransactionListener listener : mTransactionListeners) {
+            listener.onTransaction(transaction, isBack);
+        }
     }
 
     public void switchFragment(@NonNull Fragment fragment, SwitchMethod switchMethod, boolean addToEnd) {
@@ -111,6 +123,7 @@ public class NavigationHandler {
         requestFeatureProvider(fragment);
 
         transaction.commit();
+        notifyListeners(listTransaction, false);
     }
 
     private void setAnimation(FragmentTransaction transaction) {
@@ -127,6 +140,7 @@ public class NavigationHandler {
 
         for (Transaction transaction1 : mNavigationList) {
             transaction.remove(transaction1.getFragment());
+            notifyListeners(transaction1, true);
         }
 
         mNavigationList.clear();
@@ -142,6 +156,7 @@ public class NavigationHandler {
             setAnimation(transaction);
 
             transaction.remove(mNavigationList.get(index).getFragment());
+            notifyListeners(mNavigationList.get(index), true);
             mNavigationList.remove(index);
             transaction.commit();
         }
@@ -163,6 +178,7 @@ public class NavigationHandler {
             for (int i = 0; i < count; i++) {
                 if (mNavigationList.size() > 0) {
                     transaction.remove(mNavigationList.get(mNavigationList.size() - 1).getFragment());
+                    notifyListeners(mNavigationList.get(mNavigationList.size() - 1), true);
                     mNavigationList.remove(mNavigationList.size() - 1);
                 }
             }
@@ -198,5 +214,10 @@ public class NavigationHandler {
             List<Feature> features = ((FeatureRequester) fragment).requestFeature();
             mFeatureProvider.provideFeatures(features);
         }
+    }
+
+    public interface FragmentTransactionListener {
+
+        void onTransaction(Transaction transaction, boolean isBack);
     }
 }

@@ -13,7 +13,7 @@ ext {
     siteUrl = 'https://github.com/CrazyDude1994/android-navigation-handler'
     gitUrl = 'https://github.com/CrazyDude1994/android-navigation-handler.git'
 
-    libraryVersion = '0.2.2'
+    libraryVersion = '0.3.0'
 
     developerId = 'crazydude1994'
     developerName = 'Sergey Kartavtsev'

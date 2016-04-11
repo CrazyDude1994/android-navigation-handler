@@ -3,6 +3,7 @@ package com.crazydude.navigationhandlerdemo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -29,6 +30,13 @@ public class MainActivity extends AppCompatActivity implements FeatureProvider {
         setContentView(R.layout.activity_main);
 
         mNavigationHandler = new NavigationHandler(this, R.id.content, this);
+
+        mNavigationHandler.addTransactionListener(new NavigationHandler.FragmentTransactionListener() {
+            @Override
+            public void onTransaction(NavigationHandler.Transaction transaction, boolean isBack) {
+                Log.d("TRANSACTION", "is back: " + isBack);
+            }
+        });
 
         mRadioGroup = (RadioGroup) findViewById(R.id.radio_group);
 
