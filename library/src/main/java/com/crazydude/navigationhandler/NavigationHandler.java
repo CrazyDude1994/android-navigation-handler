@@ -162,7 +162,7 @@ public class NavigationHandler {
 
             for (int i = 0; i < count; i++) {
                 if (mNavigationList.size() > 0) {
-                    transaction.remove(mNavigationList.get(mNavigationList.size() - 1 - i).getFragment());
+                    transaction.remove(mNavigationList.get(mNavigationList.size() - 1).getFragment());
                     mNavigationList.remove(mNavigationList.size() - 1);
                 }
             }
@@ -178,21 +178,6 @@ public class NavigationHandler {
     }
 
     public void handleBackButtonPress() {
-        /*if (mNavigationList.size() > 1) {
-            FragmentManager fragmentManager = mActivity.get().getSupportFragmentManager();
-            FragmentTransaction transaction = fragmentManager.beginTransaction();
-            transaction.remove(mNavigationList.get(mNavigationList.size() - 1).getFragment());
-            mNavigationList.remove(mNavigationList.get(mNavigationList.size() - 1));
-            if (mNavigationList.size() > 0) {
-                Fragment fragment = mNavigationList.get(mNavigationList.size() - 1).getFragment();
-                if (!fragment.isAdded()) {
-                    transaction.add(mContentId, fragment);
-                }
-            }
-            transaction.commit();
-        } else {
-            mActivity.get().finish();
-        }*/
         switchBack();
     }
 
